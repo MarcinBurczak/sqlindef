@@ -10,7 +10,8 @@ object ID3 {
     commands.groupBy(_.tokensCount)
 
   def decisionTree(commands: (Int, Seq[Command])) = {
-
+    val att = attributes(commands._2, Set(commands._1))
+    val minEntropyAtt = attributeNoWithMinEntropy(att)
   }
 
   def commandsWithAttributeValue(commands: Seq[Command], index: Int, value: Int) =
