@@ -10,11 +10,6 @@ import xml.Elem
  */
 class ID3Spec extends Specification {
 
-//  def toXml(tree: Tree): Elem = tree match {
-//    case Leaf(v, d) => <leaf wartosc={v} decision={d}/>
-//    case Node(a, v, at) => <node wartosc={v} atrybut={a}/>//{n.nodes.map(toXml)}</node>
-//  }
-
   "ID3" should {
 
     "group commands by tokens count" in {
