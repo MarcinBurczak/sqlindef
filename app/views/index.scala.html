@@ -1,0 +1,19 @@
+@(commands: Seq[Command])
+
+<input type="submit" value="Create">
+
+<table border="1">
+  <th>SQL</th>
+  <th>Is attack</th>
+  <th>Tokens</th>
+
+  @commands.map {command =>
+    <tr>
+      <td>@command.sql</td>
+      <td>@command.attack</td>
+      <td>@command.tokens</td>
+    </tr>
+  }
+
+</table>
+
