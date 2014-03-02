@@ -6,7 +6,7 @@ package models
  */
 sealed trait Tree
 case class Leaf(value: Int, decision: Decision) extends Tree
-case class Node(attribute: Int, value: Int, nodes: Seq[Node]) extends Tree
+case class Node(attribute: Int, value: Int, nodes: Seq[Tree]) extends Tree
 
 sealed trait Decision
 case object Attack extends Decision

@@ -19,4 +19,12 @@ case class AttributeValue(value: Int,
       val b = (count - yesCount) / count.toDouble
       -a * DoubleMath.log2(a) -b * DoubleMath.log2(b)
     }
+
+  val decision =
+    if (yesCount >= noCount) Attack
+    else NoAttack
+
+  val isLeaf = yesCount == 0 || noCount == 0
+
+  val toLeaf = Leaf(value, decision)
 }

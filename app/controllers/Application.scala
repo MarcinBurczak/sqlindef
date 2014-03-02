@@ -9,7 +9,14 @@ import play.api.Play.current
 object Application extends Controller {
 
   def index = Action {
-    val lines = Source.fromFile(Play.getFile("conf/ataki_30.txt")).getLines.map(Command(_, true)).toSeq
-    Ok(views.html.index(lines))
+    val attacks70 = fromFile("conf/attacks70.txt", true)
+    val noAttacks70 = fromFile("conf/noAttacks70.txt", false)
+    val commands = attacks70 ++  noAttacks70
+
+    Ok(views.html.index(attacks70))
   }
+
+  def fromFile(path: String, attack: Boolean) =
+    Source.fromFile(Play.getFile(path)).getLines.map(Command(_, attack)).toSeq
+
 }

@@ -7,11 +7,40 @@ package models
 object ID3 {
 
   def decisionTrees(commands: Seq[Command]) =
+    groupByTokensCount(commands).map(p => (p._1, decisionTree2(p)))
+
+  def groupByTokensCount(commands: Seq[Command]) =
     commands.groupBy(_.tokensCount)
 
-  def decisionTree(commands: (Int, Seq[Command])) = {
-    val att = attributes(commands._2, Set(commands._1))
+  def decisionTree2(commands: (Int, Seq[Command])) =
+    decisionTree(commands._2, (0 until commands._1).toSet, -1)
+
+  def decisionTree(commands: Seq[Command], attributesNo: Set[Int], value: Integer): Tree = {
+    val att = attributes(commands, attributesNo)
     val minEntropyAtt = attributeNoWithMinEntropy(att)
+
+    if (minEntropyAtt.isEmpty) Leaf(value, Attack)
+    else {
+      val index = minEntropyAtt.get
+      val attribute = att(index)
+      val decisions = attribute.values.groupBy(_.decision)
+
+      if (decisions.size == 1) Leaf(value, decisions.head._1)
+      else {
+        val nodes = attribute.values.map { at =>
+          if (at.isLeaf) at.toLeaf
+          else {
+            val newAttributesNo = attributesNo - index
+            if (newAttributesNo.isEmpty) at.toLeaf
+            else {
+              val newCommands = commandsWithAttributeValue(commands, index, at.value)
+              decisionTree(newCommands, newAttributesNo, at.value)
+            }
+          }
+        }
+        Node(index, value, nodes)
+      }
+    }
   }
 
   def commandsWithAttributeValue(commands: Seq[Command], index: Int, value: Int) =
@@ -26,6 +55,10 @@ object ID3 {
   def attributes(commands: Seq[Command], attributesNo: Set[Int]) =
     attributesNo.map(i => (i, Attribute(attributeValues(commands, i)))).toMap
 
-  def attributeNoWithMinEntropy(attributes: Map[Int, Attribute]) =
-    attributes.minBy(kv => kv._2.entropy)._1
+  def attributeNoWithMinEntropy(attributes: Map[Int, Attribute]) = {
+    val attNo = attributes.minBy(kv => kv._2.entropy)._1
+    if (attributes(attNo).entropy >= 1) None
+    else Some(attNo)
+  }
+
 }
