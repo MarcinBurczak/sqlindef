@@ -2,35 +2,31 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import models.{Node, Leaf, Tree, Command}
+import models.Command
 import io.Source
 import play.api.Play.current
-import xml.Elem
 
 object Application extends Controller {
 
   val attacks70 = fromFile("conf/attacks70.txt", true)
   val noAttacks70 = fromFile("conf/noAttacks70.txt", false)
-  val commands = attacks70 ++  noAttacks70
-  val trees = models.ID3.decisionTrees(commands)
+  val attacks30 = fromFile("conf/attacks30.txt", false)
+  val noAttacks30 = fromFile("conf/noAttacks30.txt", false)
 
-  def toXml(tree: Tree): Elem = tree match {
-    case Leaf(v, d) => <leaf wartosc={v.toString} decision={d.toString}/>
-    case Node(a, v, at) => <node wartosc={v.toString} atrybut={a.toString}>{at.map(toXml(_))}</node>
-  }
+  val trainingCommands = attacks70 ++  noAttacks70
+  val testCommands = attacks30 ++  noAttacks30
 
-  def index = Action {
-    val attacks70 = fromFile("conf/attacks70.txt", true)
-    val noAttacks70 = fromFile("conf/noAttacks70.txt", false)
-    val commands = attacks70 ++  noAttacks70
-
-    Ok(views.html.index(attacks70))
-  }
+  val trees = models.ID3.decisionTrees(trainingCommands)
 
   def fromFile(path: String, attack: Boolean) =
     Source.fromFile(Play.getFile(path)).getLines.map(Command(_, attack)).toSeq
 
+  def index = Action {
+    Ok(views.html.index(testCommands))
+  }
+
   def tree(id: Int) = Action {
-    Ok(toXml(trees(id)))
+    if (trees.isDefinedAt(id)) Ok(trees(id).toXml)
+    else Ok("Brak drzewa decyzyjnego o podanej liczbie tokenów")
   }
 }

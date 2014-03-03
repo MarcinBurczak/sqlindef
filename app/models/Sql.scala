@@ -9,27 +9,6 @@ object Sql {
   val NUMBER         = "\\d*"
   val IDENTYFIKATOR1 = "a*"
 
-  val COMMA               = ","
-  val SPACE               = " "
-  val DOT                 = "."
-  val SEMICOLON           = ""
-  val COLON               = ":"
-  val INTERJECTION        = "!"
-  val PERCENT             = "%"
-  val LEFT_BRACKET        = "("
-  val RIGHT_BRACKET       = ")"
-  val EQUAL_SIGN          = "="
-  val LESS                = "<"
-  val LARGER              = ">"
-  val MINUS_SIGN          = "-"
-  val MULTIPLICATION_SIGN = "*"
-  val DEVIDE_SIGN         = "/"
-  val PLUS_SIGN           = "+"
-  val EMPTY_STRING        = ""
-  val MINUS_ONE           = "-1"
-  val ONE                 = "1"
-  val ZERO                = "0"
-
   val lexems = Map(
     "SELECT" -> 0,
     "FROM" -> 1,
