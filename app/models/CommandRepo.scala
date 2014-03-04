@@ -13,6 +13,7 @@ object CommandRepo {
   val noAttacks70 = fromFile("conf/noAttacks70.txt", false)
   val attacks30 = fromFile("conf/attacks30.txt", true)
   val noAttacks30 = fromFile("conf/noAttacks30.txt", false)
+  val signatures = fromFile("conf/signatures.txt", false)
 
   val trainingCommands = attacks70 ++  noAttacks70
   val testCommands = attacks30 ++  noAttacks30

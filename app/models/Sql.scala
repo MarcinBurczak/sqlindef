@@ -5,10 +5,6 @@ package models
  * @since 01.03.14
  */
 object Sql {
-  val OPERATOR       = "=|!=|>=|<=|>|<|\\(|\\,"
-  val NUMBER         = "\\d*"
-  val IDENTYFIKATOR1 = "a*"
-
   val lexems = Map(
     "SELECT" -> 0,
     "FROM" -> 1,
@@ -43,8 +39,6 @@ object Sql {
     "UNION" -> 30,
     "HAVING" -> 31,
     "INTO" -> 32,
-    IDENTYFIKATOR1 -> 33,
-    NUMBER -> 34,
     "=" -> 35,
     "!=" -> 36,
     ">=" -> 37,
@@ -53,5 +47,7 @@ object Sql {
     "<" -> 40,
     "(" -> 41,
     ")" -> 42)
-  .withDefaultValue(-1)
+  .withDefaultValue(-1) // number or identifier
+
+  lazy val lexemsToSql = lexems.map(_.swap).withDefaultValue("IdOrNumber")
 }

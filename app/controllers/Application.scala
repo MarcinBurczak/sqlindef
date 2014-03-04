@@ -1,14 +1,19 @@
 package controllers
 
 import play.api.mvc._
-import models.{ID3, CommandRepo}
+import models._
+import models.SignatureTesterStrategy
+import models.TreeTesterStrategy
 
 object Application extends Controller {
 
   val trees = ID3.decisionTrees(CommandRepo.trainingCommands)
+  val treesTester = TreeTesterStrategy(trees)
+  val signaturesTester = SignatureTesterStrategy(CommandRepo.signatures)
 
   def index = Action {
-    Ok(views.html.index(CommandRepo.testCommands))
+    val commands = CommandRepo.testCommands.map(c => (c, treesTester.test(c), signaturesTester.test(c)))
+    Ok(views.html.index(commands))
   }
 
   def tree(id: Int) = Action {
