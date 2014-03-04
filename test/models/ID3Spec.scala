@@ -13,10 +13,16 @@ class ID3Spec extends Specification {
 
     val attacks70 = fromFile("conf/attacks70.txt", true)
     val noAttacks70 = fromFile("conf/noAttacks70.txt", false)
+    val attacks30 = fromFile("conf/attacks30.txt", true)
+    val noAttacks30 = fromFile("conf/noAttacks30.txt", false)
     val commands = attacks70 ++  noAttacks70
+    val commands2 = attacks30 ++  noAttacks30
 
     "group commands by tokens count" in {
-      ID3.decisionTrees(commands).size === 141
+      val trees: Map[Int, Tree] = ID3.decisionTrees(commands)
+
+      println(TreeTesterStrategy(trees).test(commands2))
+      trees.size === 141
     }
   }
 

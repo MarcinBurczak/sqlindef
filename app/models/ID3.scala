@@ -13,50 +13,54 @@ object ID3 {
     commands.groupBy(_.tokensCount)
 
   def decisionTreeRoot(commands: (Int, Seq[Command])) =
-    decisionTree(commands._2, (0 until commands._1).toSet, -1)
+    decisionTree(commands._2, attributesSet(commands._1), -1)
 
-  def decisionTree(commands: Seq[Command], attributesNo: Set[Int], value: Integer): Tree = {
-    val att = attributes(commands, attributesNo)
+  def attributesSet(index: Int) =
+    (0 until index).toSet
+
+  def decisionTree(commands: Seq[Command], attributesSet: Set[Int], value: Integer): Tree = {
+    val att = attributes(commands, attributesSet)
     val minEntropyAtt = attributeNoWithMinEntropy(att)
-
     if (minEntropyAtt.isEmpty) Leaf(value, Attack)
     else {
       val index = minEntropyAtt.get
       val attribute = att(index)
-      decisionTreeForAttributeWithMinEntropy(index, attribute, value, attributesNo, commands)
+      decisionTreeForAttributeWithMinEntropy(index, attribute, value, attributesSet, commands)
     }
   }
 
   def decisionTreeForAttributeWithMinEntropy(index: Int, attribute: Attribute, value: Integer, attributesNo: Set[Int], commands: Seq[Command]): Tree = {
     val decisions = attribute.values.groupBy(_.decision)
-
     if (decisions.size == 1) Leaf(value, decisions.head._1)
     else {
-      val nodes = attribute.values.map {
-        at =>
-          if (at.isLeaf) at.toLeaf
-          else {
-            val newAttributesNo = attributesNo - index
-            if (newAttributesNo.isEmpty) at.toLeaf
-            else {
-              val newCommands = commandsWithAttributeValue(commands, index, at.value)
-              decisionTree(newCommands, newAttributesNo, at.value)
-            }
-          }
-      }
+      val nodes = attribute.values.map(toNodes(_, attributesNo, index, commands))
       Node(index, value, nodes)
+    }
+  }
+
+  def toNodes(at: AttributeValue, attributesSet: Set[Int], index: Int, commands: Seq[Command]): Tree = {
+    if (at.isLeaf) at.toLeaf
+    else toNodes2(attributesSet, index, at, commands)
+  }
+
+  def toNodes2(attributesSet: Set[Int], index: Int, at: AttributeValue, commands: Seq[Command]): Tree = {
+    val newAttributesSet = attributesSet - index
+    if (newAttributesSet.isEmpty) at.toLeaf
+    else {
+      val newCommands = commandsWithAttributeValue(commands, index, at.value)
+      decisionTree(newCommands, newAttributesSet, at.value)
     }
   }
 
   def commandsWithAttributeValue(commands: Seq[Command], index: Int, value: Int) =
     commands.filter(_.hasTokenWithValue(index, value))
 
-  def attributes(commands: Seq[Command], attributesNo: Set[Int]) =
-    attributesNo.map(i => (i, Attribute(attributeValues(commands, i)))).toMap
+  def attributes(commands: Seq[Command], attributesSet: Set[Int]) =
+    attributesSet.map(i => (i, Attribute(attributeValues(commands, i)))).toMap
 
   def attributeValues(commands: Seq[Command], index: Int) =
     commands.groupBy(_.tokens(index))
-      .mapValues(c => c.span(_.attack))
+      .mapValues(_.span(_.attack))
       .map(kv => AttributeValue(kv._1, kv._2._1.size, kv._2._2.size))
       .toSeq
 
