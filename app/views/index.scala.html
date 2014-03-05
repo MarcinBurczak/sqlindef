@@ -1,19 +1,30 @@
 @(commands: Seq[(Command, Boolean, Boolean)])
 
-<table border="1">
-  <th>SQL</th>
-  <th>Is attack</th>
-  <th>Is attack (ID3)</th>
-  <th>Is attack (signature)</th>
+@main("SQL Inject defender") {
 
-  @commands.map {command =>
-    <tr>
-      <td>@command._1.sql</td>
-      <td>@command._1.attack</td>
-      <td>@command._2</td>
-      <td>@command._3</td>
-    </tr>
-  }
+    <table class="table table-hove">
+        <th>SQL</th>
+        <th>@Messages("attack")</th>
+        <th>Is attack (ID3)</th>
+        <th>Is attack (signature)</th>
 
-</table>
+        @commands.map {command =>
+        <tr>
+            @if(command._1.attack && !command._2 && !command._3) {
+            <td style="color:red">@command._1.sql</td>
+            } else {
+            @if(command._1.attack && ((!command._2 && command._3) || (command._2 && !command._3))) {
+            <td style="color:yellow">@command._1.sql</td>
+            } else {
+            <td>@command._1.sql</td>
+            }
+            }
+            <td>@command._1.attack</td>
+            <td><a href='@routes.Application.tree(command._1.tokensCount)'>@command._2</a></td>
+            <td>@command._3</td>
+        </tr>
+        }
+    </table>
+
+}
 

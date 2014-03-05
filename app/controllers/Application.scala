@@ -13,7 +13,7 @@ object Application extends Controller {
 
   def index = Action {
     val commands = CommandRepo.testCommands.map(c => (c, treesTester.test(c), signaturesTester.test(c)))
-    Ok(views.html.index(commands))
+    Ok(views.html.index(commands.take(100)))
   }
 
   def tree(id: Int) = Action {
