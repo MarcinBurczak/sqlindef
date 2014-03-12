@@ -17,7 +17,8 @@ object Application extends Controller {
   }
 
   def tree(id: Int) = Action {
-    if (trees.isDefinedAt(id)) Ok(trees(id).toXml)
-    else Ok("Brak drzewa decyzyjnego o podanej liczbie tokenów")
+    trees.get(id)
+      .map(t => Ok(t.toXml))
+      .getOrElse(NotFound)
   }
 }
