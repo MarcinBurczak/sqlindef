@@ -26,4 +26,10 @@ class Application @Inject()(cc: ControllerComponents, env: Environment) extends 
       .map(t => Ok(t.toXml))
       .getOrElse(NotFound)
   }
+
+  def summary = Action {
+    val treeSummary = treesTester.test(repo.testCommands)
+    val sigSummary = signaturesTester.test(repo.testCommands)
+    Ok(views.html.summary(treeSummary, sigSummary))
+  }
 }

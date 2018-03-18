@@ -1,0 +1,24 @@
+@(treeSummary: (Double, Double), sigSummary: (Double, Double))
+
+@main("SQL Inject defender") {
+
+
+<table class="table table-hove">
+    <th>Algorytm</th>
+    <th>false negative</th>
+    <th>false positive</th>
+
+    <tr>
+        <td>Drzewo decyzyjne</td>
+        <td>@treeSummary._1</td>
+        <td>@treeSummary._2</td>
+    </tr>
+
+    <tr>
+        <td>Sygnatury</td>
+        <td>@sigSummary._1</td>
+        <td>@sigSummary._2</td>
+    </tr>
+</table>
+
+}
