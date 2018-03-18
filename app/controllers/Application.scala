@@ -1,18 +1,23 @@
 package controllers
 
+import javax.inject._
 import play.api.mvc._
 import models._
 import models.SignatureTesterStrategy
 import models.TreeTesterStrategy
+import play.api.Environment
 
-object Application extends Controller {
+@Singleton
+class Application @Inject()(cc: ControllerComponents, env: Environment) extends AbstractController(cc) {
 
-  val trees = ID3.decisionTrees(CommandRepo.trainingCommands)
+  private val repo = new CommandRepo(env)
+
+  val trees = ID3.decisionTrees(repo.trainingCommands)
   val treesTester = TreeTesterStrategy(trees)
-  val signaturesTester = SignatureTesterStrategy(CommandRepo.signatures)
+  val signaturesTester = SignatureTesterStrategy(repo.signatures)
 
   def index = Action {
-    val commands = CommandRepo.testCommands.map(c => (c, treesTester.test(c), signaturesTester.test(c)))
+    val commands = repo.testCommands.map(c => (c, treesTester.test(c), signaturesTester.test(c)))
     Ok(views.html.index(commands.take(100)))
   }
 
