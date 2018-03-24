@@ -1,0 +1,47 @@
+//  val tokensF: String => List[Int] = x => x.split(' ').map(_.trim).filterNot(_.isEmpty).map(Sql.lexems).toList
+//
+//  val attacks30 = sc.textFile("/home/marcin/workspace/sqlindef/conf/data/attacks30.txt")
+//  val attacks70 = sc.textFile("/home/marcin/workspace/sqlindef/conf/data/attacks70.txt")
+//  val noAttacks30 = sc.textFile("/home/marcin/workspace/sqlindef/conf/data/noAttacks30.txt")
+//  val noAttacks70 = sc.textFile("/home/marcin/workspace/sqlindef/conf/data/noAttacks70.txt")
+//
+//  val attacks30Commands = attacks30.map(tokensF)
+//  val attacks70Commands = attacks70.map(tokensF)
+//  val noAttacks30Commands = noAttacks30.map(tokensF)
+//  val noAttacks70Commands = noAttacks70.map(tokensF)
+//
+//  attacks30Commands.first
+//  attacks70Commands.first
+//  noAttacks30Commands.first
+//  noAttacks70Commands.first
+//
+//  val attacks30Points = attacks30Commands.map(x => LabeledPoint(1.0, Vectors.dense(x.map(_.toDouble).toArray)))
+//  val attacks70Points = attacks70Commands.map(x => LabeledPoint(1.0, Vectors.dense(x.map(_.toDouble).toArray)))
+//  val noAttacks30Points = noAttacks30Commands.map(x => LabeledPoint(0.0, Vectors.dense(x.map(_.toDouble).toArray)))
+//  val noAttacks70Points = noAttacks70Commands.map(x => LabeledPoint(0.0, Vectors.dense(x.map(_.toDouble).toArray)))
+//
+//  val training = attacks70Points.++(noAttacks70Points)
+//  val test = attacks30Points.++(noAttacks30Points)
+//
+//  val training20 = training.filter(_.features.size == 20)
+//  val test20 = test.filter(_.features.size == 20)
+//
+//  val numClasses = 2
+//  val categoricalFeaturesInfo = Map[Int, Int]()
+//  val impurity = "entropy"
+//  val maxDepth = 20
+//  val maxBins = 32
+//
+//  import org.apache.spark.mllib.tree.DecisionTree
+//  import org.apache.spark.mllib.tree.model.DecisionTreeModel
+//
+//  val model = DecisionTree.trainClassifier(training20, numClasses, categoricalFeaturesInfo,
+//    impurity, maxDepth, maxBins)
+//
+//  val labelAndPreds = test20.map { point =>
+//    val prediction = model.predict(point.features)
+//    (point.label, prediction)
+//  }
+//  val testErr = labelAndPreds.filter(r => r._1 != r._2).count().toDouble / test20.count()
+//  println(s"Test Error = $testErr")
+//  println(s"Learned classification tree model:\n ${model.toDebugString}")

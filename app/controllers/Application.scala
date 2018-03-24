@@ -15,6 +15,8 @@ class Application @Inject()(cc: ControllerComponents, env: Environment) extends 
   val trees = ID3.decisionTrees(repo.trainingCommands)
   val treesTester = TreeTesterStrategy(trees)
   val signaturesTester = SignatureTesterStrategy(repo.signatures)
+  val trainCommandsByCount = repo.trainingCommands.groupBy(_.tokensCount)
+  val testCommandsByCount = repo.testCommands.groupBy(_.tokensCount)
 
   def index = Action {
     val commands = repo.testCommands.map(c => (c, treesTester.test(c), signaturesTester.test(c)))
@@ -25,6 +27,23 @@ class Application @Inject()(cc: ControllerComponents, env: Environment) extends 
     trees.get(id)
       .map(t => Ok(t.toXml))
       .getOrElse(NotFound)
+  }
+
+  def treesView = Action {
+    val map = (1 to 100).map(i => {
+      val testCommands = testCommandsByCount.get(i)
+      val tree = trees.get(i)
+      val pred = (for {
+        commands <- testCommands
+        t <- tree
+      } yield {
+        val goodPredicts = commands.map(c => (c.attack, treesTester.predict(c, t)))
+          .count(p => p._1 == p._2).toDouble
+        goodPredicts / commands.size
+      }).getOrElse(0.0)
+      (i, pred)
+    })
+    Ok(views.html.trees(map, trainCommandsByCount.mapValues(_.size), testCommandsByCount.mapValues(_.size)))
   }
 
   def summary = Action {

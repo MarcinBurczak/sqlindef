@@ -10,17 +10,17 @@ case class TreeTesterStrategy(trees: Map[Int, Tree]) extends TesterStrategy {
     if (!trees.isDefinedAt(command.tokensCount)) false
     else {
       val tree = trees(command.tokensCount)
-      parse(command, tree)
+      predict(command, tree)
     }
   }
 
-  def parse(command: Command, tree: Tree): Boolean = tree match {
+  def predict(command: Command, tree: Tree): Boolean = tree match {
     case l: Leaf => l.decision == Attack
     case n: Node => {
       val value = command.tokens(n.attribute)
       val node = n.nodes.find(_.value == value)
       if (node.isEmpty) false
-      else parse(command, node.get)
+      else predict(command, node.get)
     }
   }
 }

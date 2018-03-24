@@ -1,0 +1,24 @@
+@(trees: Seq[(Int, Double)], train: Map[Int, Int], test: Map[Int, Int])
+
+@main("SQL Inject defender") {
+
+<br/>
+
+<table class="table table-hove">
+    <th>Ilość tokenów</th>
+    <th>Ilość poleceń treningowych</th>
+    <th>Ilość poleceń testowych</th>
+    <th>Skuteczność</th>
+
+    @trees.map {tree =>
+    <tr>
+        <td>@tree._1</td>
+        <td>@train.getOrElse(tree._1, 0)</td>
+        <td>@test.getOrElse(tree._1, 0)</td>
+        <td>@java.text.NumberFormat.getPercentInstance.format(tree._2)</td>
+    </tr>
+    }
+
+</table>
+
+}

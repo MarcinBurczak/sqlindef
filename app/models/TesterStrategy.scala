@@ -10,7 +10,7 @@ trait TesterStrategy {
     val attackCount = commands.count(_.attack)
     val noAttackCount = commands.size - attackCount
 
-    val suspiciousCommand = commands.filter(test(_))
+    val suspiciousCommand = commands.filter(test)
     val attackSuspiciousCount = suspiciousCommand.count(_.attack)
     val noAttackSuspiciousCount = suspiciousCommand.size - attackSuspiciousCount
 
